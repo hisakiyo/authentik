@@ -5,6 +5,7 @@ from os import getpid
 
 import structlog
 
+from authentik.events.utils import LogSerializer
 from authentik.lib.config import CONFIG
 
 LOG_PRE_CHAIN = [
@@ -42,6 +43,7 @@ def structlog_configure():
             structlog.processors.StackInfoRenderer(),
             structlog.processors.dict_tracebacks,
             structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
+            log_serializer_processor,
         ],
         logger_factory=structlog.stdlib.LoggerFactory(),
         wrapper_class=structlog.make_filtering_bound_logger(
@@ -111,4 +113,15 @@ def get_logger_config():
 def add_process_id(logger: Logger, method_name: str, event_dict):
     """Add the current process ID"""
     event_dict["pid"] = getpid()
+    serializer = LogSerializer(data=event_dict)
+    if serializer.is_valid():
+        return serializer.data
+    return event_dict
+
+
+def log_serializer_processor(logger: Logger, method_name: str, event_dict):
+    """Serialize log data using the custom LogSerializer."""
+    serializer = LogSerializer(data=event_dict)
+    if serializer.is_valid():
+        return serializer.data
     return event_dict

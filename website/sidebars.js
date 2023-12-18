@@ -26,7 +26,15 @@ const docsSidebar = {
                 "installation/reverse-proxy",
                 "installation/automated-install",
                 "installation/air-gapped",
-                "installation/monitoring",
+            ],
+        },
+        {
+            type: "category",
+            label: "Running authentik",
+            collapsed: true,
+            items: [
+                "running/monitoring",
+                "running/postgres_upgrade_kubernetes",
             ],
         },
         {
@@ -381,11 +389,6 @@ const docsSidebar = {
                         description:
                             "Steps to help debug forward auth setups with various reverse proxies.",
                     },
-                },
-                {
-                    type: "category",
-                    label: "PostgreSQL",
-                    items: ["troubleshooting/postgres/upgrade_kubernetes"],
                 },
                 "troubleshooting/access",
                 "troubleshooting/login",

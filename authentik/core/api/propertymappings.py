@@ -7,11 +7,12 @@ from guardian.shortcuts import get_objects_for_user
 from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.fields import BooleanField, CharField
+from rest_framework.fields import BooleanField, CharField, ListField
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework.viewsets import GenericViewSet
+from structlog.testing import capture_logs
 
 from authentik.api.decorators import permission_required
 from authentik.blueprints.api import ManagedSerializer
@@ -19,7 +20,7 @@ from authentik.core.api.used_by import UsedByMixin
 from authentik.core.api.utils import MetaNameSerializer, PassiveSerializer, TypeCreateSerializer
 from authentik.core.expression.evaluator import PropertyMappingEvaluator
 from authentik.core.models import PropertyMapping
-from authentik.events.utils import sanitize_item
+from authentik.events.utils import LogSerializer, sanitize_item
 from authentik.lib.utils.reflection import all_subclasses
 from authentik.policies.api.exec import PolicyTestSerializer
 
@@ -29,6 +30,7 @@ class PropertyMappingTestResultSerializer(PassiveSerializer):
 
     result = CharField(read_only=True)
     successful = BooleanField(read_only=True)
+    log_messages = ListField(child=LogSerializer(), read_only=True)
 
 
 class PropertyMappingSerializer(ManagedSerializer, ModelSerializer, MetaNameSerializer):
@@ -133,14 +135,16 @@ class PropertyMappingViewSet(
 
         response_data = {"successful": True, "result": ""}
         try:
-            result = mapping.evaluate(
-                users.first(),
-                self.request,
-                **test_params.validated_data.get("context", {}),
-            )
+            with capture_logs() as logs:
+                result = mapping.evaluate(
+                    users.first(),
+                    self.request,
+                    **test_params.validated_data.get("context", {}),
+                )
             response_data["result"] = dumps(
                 sanitize_item(result), indent=(4 if format_result else None)
             )
+            response_data["log_messages"] = [LogSerializer(data=log).data for log in logs]
         except Exception as exc:  # pylint: disable=broad-except
             response_data["result"] = str(exc)
             response_data["successful"] = False

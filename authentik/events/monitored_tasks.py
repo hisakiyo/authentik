@@ -9,7 +9,7 @@ from celery import Task
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 from structlog.stdlib import get_logger
-
+from structlog.types import EventDict
 from authentik.events.apps import GAUGE_TASKS
 from authentik.events.models import Event, EventAction
 from authentik.lib.utils.errors import exception_to_string
@@ -34,7 +34,7 @@ class TaskResult:
 
     status: TaskResultStatus
 
-    messages: list[str] = field(default_factory=list)
+    messages: list[EventDict] = field(default_factory=list)
 
     # Optional UID used in cache for tasks that run in different instances
     uid: Optional[str] = field(default=None)

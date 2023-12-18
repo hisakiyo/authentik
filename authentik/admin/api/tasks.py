@@ -22,6 +22,7 @@ from structlog.stdlib import get_logger
 from authentik.api.decorators import permission_required
 from authentik.core.api.utils import PassiveSerializer
 from authentik.events.monitored_tasks import TaskInfo, TaskResultStatus
+from authentik.events.utils import LogSerializer
 from authentik.rbac.permissions import HasPermission
 
 LOGGER = get_logger()
@@ -39,7 +40,7 @@ class TaskSerializer(PassiveSerializer):
         source="result.status.name",
         choices=[(x.name, x.name) for x in TaskResultStatus],
     )
-    messages = ListField(source="result.messages")
+    messages = LogSerializer(source="result.messages", many=True)
 
     def get_task_duration(self, instance: TaskInfo) -> int:
         """Get the duration a task took to run"""

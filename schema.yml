@@ -33161,6 +33161,23 @@ components:
           type: string
       required:
       - link
+    Log:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        log_level:
+          type: string
+        message:
+          type: string
+        attributes:
+          type: object
+          additionalProperties: {}
+      required:
+      - log_level
+      - message
+      - timestamp
     LoginChallengeTypes:
       oneOf:
       - $ref: '#/components/schemas/RedirectChallenge'
@@ -38668,8 +38685,7 @@ components:
         log_messages:
           type: array
           items:
-            type: object
-            additionalProperties: {}
+            $ref: '#/components/schemas/Log'
           readOnly: true
       required:
       - log_messages
@@ -38986,7 +39002,13 @@ components:
         successful:
           type: boolean
           readOnly: true
+        log_messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Log'
+          readOnly: true
       required:
+      - log_messages
       - result
       - successful
     Provider:
@@ -41343,7 +41365,8 @@ components:
           $ref: '#/components/schemas/TaskStatusEnum'
         messages:
           type: array
-          items: {}
+          items:
+            $ref: '#/components/schemas/Log'
       required:
       - messages
       - status

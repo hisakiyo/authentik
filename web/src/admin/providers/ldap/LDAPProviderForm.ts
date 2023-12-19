@@ -1,11 +1,11 @@
 import "@goauthentik/admin/common/ak-crypto-certificate-search";
 import "@goauthentik/admin/common/ak-flow-search/ak-tenanted-flow-search";
-import { BaseProviderForm } from "@goauthentik/admin/providers/BaseProviderForm";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { first } from "@goauthentik/common/utils";
 import { rootInterface } from "@goauthentik/elements/Base";
 import "@goauthentik/elements/forms/FormGroup";
 import "@goauthentik/elements/forms/HorizontalFormElement";
+import { ModelForm } from "@goauthentik/elements/forms/ModelForm";
 import "@goauthentik/elements/forms/Radio";
 import "@goauthentik/elements/forms/SearchSelect";
 
@@ -25,11 +25,19 @@ import {
 } from "@goauthentik/api";
 
 @customElement("ak-provider-ldap-form")
-export class LDAPProviderFormPage extends BaseProviderForm<LDAPProvider> {
+export class LDAPProviderFormPage extends ModelForm<LDAPProvider, number> {
     async loadInstance(pk: number): Promise<LDAPProvider> {
         return new ProvidersApi(DEFAULT_CONFIG).providersLdapRetrieve({
             id: pk,
         });
+    }
+
+    getSuccessMessage(): string {
+        if (this.instance) {
+            return msg("Successfully updated provider.");
+        } else {
+            return msg("Successfully created provider.");
+        }
     }
 
     async send(data: LDAPProvider): Promise<LDAPProvider> {
@@ -198,7 +206,7 @@ export class LDAPProviderFormPage extends BaseProviderForm<LDAPProvider> {
                     </ak-form-element-horizontal>
                     <ak-form-element-horizontal label=${msg("Certificate")} name="certificate">
                         <ak-crypto-certificate-search
-                            .certificate=${this.instance?.certificate}
+                            certificate=${this.instance?.certificate}
                         ></ak-crypto-certificate-search>
                         <p class="pf-c-form__helper-text">
                             ${msg(

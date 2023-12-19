@@ -75,13 +75,13 @@ class BlueprintEventHandler(FileSystemEventHandler):
             return
         if event.is_directory:
             return
-        root = Path(CONFIG.get("blueprints_dir")).absolute()
-        path = Path(event.src_path).absolute()
-        rel_path = str(path.relative_to(root))
         if isinstance(event, FileCreatedEvent):
-            LOGGER.debug("new blueprint file created, starting discovery", path=rel_path)
-            blueprints_discovery.delay(rel_path)
+            LOGGER.debug("new blueprint file created, starting discovery")
+            blueprints_discovery.delay()
         if isinstance(event, FileModifiedEvent):
+            path = Path(event.src_path)
+            root = Path(CONFIG.get("blueprints_dir")).absolute()
+            rel_path = str(path.relative_to(root))
             for instance in BlueprintInstance.objects.filter(path=rel_path, enabled=True):
                 LOGGER.debug("modified blueprint file, starting apply", instance=instance)
                 apply_blueprint.delay(instance.pk.hex)
@@ -98,32 +98,39 @@ def blueprints_find_dict():
     return blueprints
 
 
-def blueprints_find() -> list[BlueprintFile]:
+def blueprints_find():
     """Find blueprints and return valid ones"""
     blueprints = []
     root = Path(CONFIG.get("blueprints_dir"))
     for path in root.rglob("**/*.yaml"):
-        rel_path = path.relative_to(root)
         # Check if any part in the path starts with a dot and assume a hidden file
         if any(part for part in path.parts if part.startswith(".")):
             continue
+        LOGGER.debug("found blueprint", path=str(path))
         with open(path, "r", encoding="utf-8") as blueprint_file:
             try:
                 raw_blueprint = load(blueprint_file.read(), BlueprintLoader)
             except YAMLError as exc:
                 raw_blueprint = None
-                LOGGER.warning("failed to parse blueprint", exc=exc, path=str(rel_path))
+                LOGGER.warning("failed to parse blueprint", exc=exc, path=str(path))
             if not raw_blueprint:
                 continue
             metadata = raw_blueprint.get("metadata", None)
             version = raw_blueprint.get("version", 1)
             if version != 1:
-                LOGGER.warning("invalid blueprint version", version=version, path=str(rel_path))
+                LOGGER.warning("invalid blueprint version", version=version, path=str(path))
                 continue
         file_hash = sha512(path.read_bytes()).hexdigest()
-        blueprint = BlueprintFile(str(rel_path), version, file_hash, int(path.stat().st_mtime))
+        blueprint = BlueprintFile(
+            str(path.relative_to(root)), version, file_hash, int(path.stat().st_mtime)
+        )
         blueprint.meta = from_dict(BlueprintMetadata, metadata) if metadata else None
         blueprints.append(blueprint)
+        LOGGER.debug(
+            "parsed & loaded blueprint",
+            hash=file_hash,
+            path=str(path),
+        )
     return blueprints
 
 
@@ -131,12 +138,10 @@ def blueprints_find() -> list[BlueprintFile]:
     throws=(DatabaseError, ProgrammingError, InternalError), base=MonitoredTask, bind=True
 )
 @prefill_task
-def blueprints_discovery(self: MonitoredTask, path: Optional[str] = None):
+def blueprints_discovery(self: MonitoredTask):
     """Find blueprints and check if they need to be created in the database"""
     count = 0
     for blueprint in blueprints_find():
-        if path and blueprint.path != path:
-            continue
         check_blueprint_v1_file(blueprint)
         count += 1
     self.set_status(
@@ -166,11 +171,7 @@ def check_blueprint_v1_file(blueprint: BlueprintFile):
             metadata={},
         )
         instance.save()
-        LOGGER.info(
-            "Creating new blueprint instance from file", instance=instance, path=instance.path
-        )
     if instance.last_applied_hash != blueprint.hash:
-        LOGGER.info("Applying blueprint due to changed file", instance=instance, path=instance.path)
         apply_blueprint.delay(str(instance.pk))
 
 

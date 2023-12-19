@@ -26,9 +26,11 @@ export class TokenForm extends ModelForm<Token, string> {
     }
 
     getSuccessMessage(): string {
-        return this.instance
-            ? msg("Successfully updated token.")
-            : msg("Successfully created token.");
+        if (this.instance) {
+            return msg("Successfully updated token.");
+        } else {
+            return msg("Successfully created token.");
+        }
     }
 
     async send(data: Token): Promise<Token> {

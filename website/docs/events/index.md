@@ -18,8 +18,8 @@ If you want to forward these events to another application, forward the log outp
 
 A user logs in (including the source, if available)
 
-<details>
-<summary>Example</summary>
+<details><summary>Example</summary>
+<p>
 
 ```json
 {
@@ -54,14 +54,15 @@ A user logs in (including the source, if available)
 }
 ```
 
+</p>
 </details>
 
 ### `login_failed`
 
 A failed login attempt
 
-<details>
-<summary>Example</summary>
+<details><summary>Example</summary>
+<p>
 
 ```json
 {
@@ -102,14 +103,15 @@ A failed login attempt
 }
 ```
 
+</p>
 </details>
 
 ### `logout`
 
 A user logs out.
 
-<details>
-<summary>Example</summary>
+<details><summary>Example</summary>
+<p>
 
 ```json
 {
@@ -142,14 +144,15 @@ A user logs out.
 }
 ```
 
+</p>
 </details>
 
 ### `user_write`
 
 A user is written to during a flow execution.
 
-<details>
-<summary>Example</summary>
+<details><summary>Example</summary>
+<p>
 
 ```json
 {
@@ -191,6 +194,7 @@ A user is written to during a flow execution.
 }
 ```
 
+</p>
 </details>
 
 ### `suspicious_request`
@@ -217,8 +221,8 @@ An invitation is used.
 
 A user authorizes an application.
 
-<details>
-<summary>Example</summary>
+<details><summary>Example</summary>
+<p>
 
 ```json
 {
@@ -266,6 +270,7 @@ A user authorizes an application.
 }
 ```
 
+</p>
 </details>
 
 ### `source_linked`

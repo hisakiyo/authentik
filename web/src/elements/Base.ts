@@ -2,9 +2,7 @@ import { config, tenant } from "@goauthentik/common/api/config";
 import { EVENT_THEME_CHANGE } from "@goauthentik/common/constants";
 import { UIConfig, uiConfig } from "@goauthentik/common/ui/config";
 import { adaptCSS } from "@goauthentik/common/utils";
-import { authentikConfigContext } from "@goauthentik/elements/AuthentikContexts";
 
-import { ContextProvider } from "@lit-labs/context";
 import { localized } from "@lit/localize";
 import { CSSResult, LitElement } from "lit";
 import { state } from "lit/decorators.js";
@@ -183,23 +181,8 @@ export class Interface extends AKElement implements AkInterface {
     @state()
     uiConfig?: UIConfig;
 
-    _configContext = new ContextProvider(this, {
-        context: authentikConfigContext,
-        initialValue: undefined,
-    });
-
-    _config?: Config;
-
     @state()
-    set config(c: Config) {
-        this._config = c;
-        this._configContext.setValue(c);
-        this.requestUpdate();
-    }
-
-    get config(): Config | undefined {
-        return this._config;
-    }
+    config?: Config;
 
     constructor() {
         super();

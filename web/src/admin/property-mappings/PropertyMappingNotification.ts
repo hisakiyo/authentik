@@ -21,9 +21,11 @@ export class PropertyMappingNotification extends ModelForm<NotificationWebhookMa
     }
 
     getSuccessMessage(): string {
-        return this.instance
-            ? msg("Successfully updated mapping.")
-            : msg("Successfully created mapping.");
+        if (this.instance) {
+            return msg("Successfully updated mapping.");
+        } else {
+            return msg("Successfully created mapping.");
+        }
     }
 
     async send(data: NotificationWebhookMapping): Promise<NotificationWebhookMapping> {

@@ -1,4 +1,3 @@
-import "@goauthentik/admin/sources/ldap/LDAPSourceConnectivity";
 import "@goauthentik/admin/sources/ldap/LDAPSourceForm";
 import "@goauthentik/app/elements/rbac/ObjectPermissionsPage";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
@@ -26,9 +25,9 @@ import PFBase from "@patternfly/patternfly/patternfly-base.css";
 
 import {
     LDAPSource,
-    LDAPSyncStatus,
     RbacPermissionsAssignedByUsersListModelEnum,
     SourcesApi,
+    Task,
     TaskStatusEnum,
 } from "@goauthentik/api";
 
@@ -49,7 +48,7 @@ export class LDAPSourceViewPage extends AKElement {
     source!: LDAPSource;
 
     @state()
-    syncState?: LDAPSyncStatus;
+    syncState: Task[] = [];
 
     static get styles(): CSSResult[] {
         return [PFBase, PFPage, PFButton, PFGrid, PFContent, PFCard, PFDescriptionList, PFList];
@@ -63,51 +62,6 @@ export class LDAPSourceViewPage extends AKElement {
         });
     }
 
-    renderSyncStatus(): TemplateResult {
-        if (!this.syncState) {
-            return html`${msg("No sync status.")}`;
-        }
-        if (this.syncState.isRunning) {
-            return html`${msg("Sync currently running.")}`;
-        }
-        if (this.syncState.tasks.length < 1) {
-            return html`${msg("Not synced yet.")}`;
-        }
-        return html`
-            <ul class="pf-c-list">
-                ${this.syncState.tasks.map((task) => {
-                    let header = "";
-                    if (task.status === TaskStatusEnum.Warning) {
-                        header = msg("Task finished with warnings");
-                    } else if (task.status === TaskStatusEnum.Error) {
-                        header = msg("Task finished with errors");
-                    } else {
-                        header = msg(str`Last sync: ${task.taskFinishTimestamp.toLocaleString()}`);
-                    }
-                    return html`<li>
-                        <p>${task.taskName}</p>
-                        <ul class="pf-c-list">
-                            <li>${header}</li>
-                            ${task.messages.map((m) => {
-                                return html`<li>${m}</li>`;
-                            })}
-                        </ul>
-                    </li> `;
-                })}
-            </ul>
-        `;
-    }
-
-    load(): void {
-        new SourcesApi(DEFAULT_CONFIG)
-            .sourcesLdapSyncStatusRetrieve({
-                slug: this.source.slug,
-            })
-            .then((state) => {
-                this.syncState = state;
-            });
-    }
-
     render(): TemplateResult {
         if (!this.source) {
             return html``;
@@ -118,7 +72,13 @@ export class LDAPSourceViewPage extends AKElement {
                 data-tab-title="${msg("Overview")}"
                 class="pf-c-page__main-section pf-m-no-padding-mobile"
                 @activate=${() => {
-                    this.load();
+                    new SourcesApi(DEFAULT_CONFIG)
+                        .sourcesLdapSyncStatusList({
+                            slug: this.source.slug,
+                        })
+                        .then((state) => {
+                            this.syncState = state;
+                        });
                 }}
             >
                 <div class="pf-l-grid pf-m-gutter">
@@ -177,25 +137,42 @@ export class LDAPSourceViewPage extends AKElement {
                             </ak-forms-modal>
                         </div>
                     </div>
-                    <div class="pf-c-card pf-l-grid__item pf-m-2-col">
-                        <div class="pf-c-card__title">
-                            <p>${msg("Connectivity")}</p>
-                        </div>
-                        <div class="pf-c-card__body">
-                            <ak-source-ldap-connectivity
-                                .connectivity=${this.source.connectivity}
-                            ></ak-source-ldap-connectivity>
-                        </div>
-                    </div>
-                    <div class="pf-c-card pf-l-grid__item pf-m-10-col">
+                    <div class="pf-c-card pf-l-grid__item pf-m-12-col">
                         <div class="pf-c-card__title">
                             <p>${msg("Sync status")}</p>
                         </div>
-                        <div class="pf-c-card__body">${this.renderSyncStatus()}</div>
+                        <div class="pf-c-card__body">
+                            ${this.syncState.length < 1
+                                ? html`<p>${msg("Not synced yet.")}</p>`
+                                : html`
+                                      <ul class="pf-c-list">
+                                          ${this.syncState.map((task) => {
+                                              let header = "";
+                                              if (task.status === TaskStatusEnum.Warning) {
+                                                  header = msg("Task finished with warnings");
+                                              } else if (task.status === TaskStatusEnum.Error) {
+                                                  header = msg("Task finished with errors");
+                                              } else {
+                                                  header = msg(
+                                                      str`Last sync: ${task.taskFinishTimestamp.toLocaleString()}`,
+                                                  );
+                                              }
+                                              return html`<li>
+                                                  <p>${task.taskName}</p>
+                                                  <ul class="pf-c-list">
+                                                      <li>${header}</li>
+                                                      ${task.messages.map((m) => {
+                                                          return html`<li>${m}</li>`;
+                                                      })}
+                                                  </ul>
+                                              </li> `;
+                                          })}
+                                      </ul>
+                                  `}
+                        </div>
                         <div class="pf-c-card__footer">
                             <ak-action-button
                                 class="pf-m-secondary"
-                                ?disabled=${this.syncState?.isRunning}
                                 .apiRequest=${() => {
                                     return new SourcesApi(DEFAULT_CONFIG)
                                         .sourcesLdapPartialUpdate({
@@ -209,7 +186,6 @@ export class LDAPSourceViewPage extends AKElement {
                                                     composed: true,
                                                 }),
                                             );
-                                            this.load();
                                         });
                                 }}
                             >

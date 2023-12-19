@@ -1,6 +1,5 @@
 import "@goauthentik/admin/common/ak-flow-search/ak-source-flow-search";
 import { iconHelperText, placeholderHelperText } from "@goauthentik/admin/helperText";
-import { BaseSourceForm } from "@goauthentik/admin/sources/BaseSourceForm";
 import { UserMatchingModeToLabel } from "@goauthentik/admin/sources/oauth/utils";
 import { DEFAULT_CONFIG, config } from "@goauthentik/common/api/config";
 import { PlexAPIClient, PlexResource, popupCenterScreen } from "@goauthentik/common/helpers/plex";
@@ -8,6 +7,7 @@ import { ascii_letters, digits, first, randomString } from "@goauthentik/common/
 import { rootInterface } from "@goauthentik/elements/Base";
 import "@goauthentik/elements/forms/FormGroup";
 import "@goauthentik/elements/forms/HorizontalFormElement";
+import { ModelForm } from "@goauthentik/elements/forms/ModelForm";
 import "@goauthentik/elements/forms/SearchSelect";
 
 import { msg } from "@lit/localize";
@@ -24,7 +24,7 @@ import {
 } from "@goauthentik/api";
 
 @customElement("ak-source-plex-form")
-export class PlexSourceForm extends BaseSourceForm<PlexSource> {
+export class PlexSourceForm extends ModelForm<PlexSource, string> {
     async loadInstance(pk: string): Promise<PlexSource> {
         const source = await new SourcesApi(DEFAULT_CONFIG).sourcesPlexRetrieve({
             slug: pk,
@@ -48,6 +48,14 @@ export class PlexSourceForm extends BaseSourceForm<PlexSource> {
         return {
             clientId: randomString(40, ascii_letters + digits),
         } as PlexSource;
+    }
+
+    getSuccessMessage(): string {
+        if (this.instance) {
+            return msg("Successfully updated source.");
+        } else {
+            return msg("Successfully created source.");
+        }
     }
 
     async send(data: PlexSource): Promise<PlexSource> {

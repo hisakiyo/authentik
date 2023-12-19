@@ -79,9 +79,11 @@ export class OutpostForm extends ModelForm<Outpost, string> {
     }
 
     getSuccessMessage(): string {
-        return this.instance
-            ? msg("Successfully updated outpost.")
-            : msg("Successfully created outpost.");
+        if (this.instance) {
+            return msg("Successfully updated outpost.");
+        } else {
+            return msg("Successfully created outpost.");
+        }
     }
 
     async send(data: Outpost): Promise<Outpost> {

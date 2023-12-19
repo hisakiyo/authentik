@@ -53,15 +53,7 @@ class TestEvents(TestCase):
         """Test plain from_http"""
         event = Event.new("unittest").from_http(self.factory.get("/"))
         self.assertEqual(
-            event.context,
-            {
-                "http_request": {
-                    "args": {},
-                    "method": "GET",
-                    "path": "/",
-                    "user_agent": "",
-                }
-            },
+            event.context, {"http_request": {"args": {}, "method": "GET", "path": "/"}}
         )
 
     def test_from_http_clean_querystring(self):
@@ -75,7 +67,6 @@ class TestEvents(TestCase):
                     "args": {"token": SafeExceptionReporterFilter.cleansed_substitute},
                     "method": "GET",
                     "path": "/",
-                    "user_agent": "",
                 }
             },
         )
@@ -92,7 +83,6 @@ class TestEvents(TestCase):
                     "args": {"token": SafeExceptionReporterFilter.cleansed_substitute},
                     "method": "GET",
                     "path": "/",
-                    "user_agent": "",
                 }
             },
         )

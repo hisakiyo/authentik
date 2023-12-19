@@ -15,12 +15,6 @@ import "./commit/ak-application-wizard-commit-application";
 import "./methods/ak-application-wizard-authentication-method";
 import { ApplicationStep as ApplicationStepType } from "./types";
 
-/**
- * In the current implementation, all of the child forms have access to the wizard's
- * global context, into which all data is written, and which is updated by events
- * flowing into the top-level orchestrator.
- */
-
 class ApplicationStep implements ApplicationStepType {
     id = "application";
     label = "Application Details";

@@ -26,9 +26,11 @@ export class TenantForm extends ModelForm<Tenant, string> {
     }
 
     getSuccessMessage(): string {
-        return this.instance
-            ? msg("Successfully updated tenant.")
-            : msg("Successfully created tenant.");
+        if (this.instance) {
+            return msg("Successfully updated tenant.");
+        } else {
+            return msg("Successfully created tenant.");
+        }
     }
 
     async send(data: Tenant): Promise<Tenant> {
@@ -233,7 +235,7 @@ export class TenantForm extends ModelForm<Tenant, string> {
                         name="webCertificate"
                     >
                         <ak-crypto-certificate-search
-                            .certificate=${this.instance?.webCertificate}
+                            certificate=${this.instance?.webCertificate}
                         ></ak-crypto-certificate-search>
                     </ak-form-element-horizontal>
                     <ak-form-element-horizontal

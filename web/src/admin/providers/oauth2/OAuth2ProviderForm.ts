@@ -1,6 +1,5 @@
 import "@goauthentik/admin/common/ak-crypto-certificate-search";
 import "@goauthentik/admin/common/ak-flow-search/ak-flow-search";
-import { BaseProviderForm } from "@goauthentik/admin/providers/BaseProviderForm";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { ascii_letters, digits, first, randomString } from "@goauthentik/common/utils";
 import "@goauthentik/components/ak-radio-input";
@@ -8,6 +7,7 @@ import "@goauthentik/components/ak-text-input";
 import "@goauthentik/components/ak-textarea-input";
 import "@goauthentik/elements/forms/FormGroup";
 import "@goauthentik/elements/forms/HorizontalFormElement";
+import { ModelForm } from "@goauthentik/elements/forms/ModelForm";
 import "@goauthentik/elements/forms/Radio";
 import "@goauthentik/elements/forms/SearchSelect";
 import "@goauthentik/elements/utils/TimeDeltaHelp";
@@ -116,7 +116,7 @@ export const redirectUriHelp = html`${redirectUriHelpMessages.map(
  */
 
 @customElement("ak-provider-oauth2-form")
-export class OAuth2ProviderFormPage extends BaseProviderForm<OAuth2Provider> {
+export class OAuth2ProviderFormPage extends ModelForm<OAuth2Provider, number> {
     propertyMappings?: PaginatedScopeMappingList;
     oauthSources?: PaginatedOAuthSourceList;
 
@@ -141,6 +141,14 @@ export class OAuth2ProviderFormPage extends BaseProviderForm<OAuth2Provider> {
             ordering: "name",
             hasJwks: true,
         });
+    }
+
+    getSuccessMessage(): string {
+        if (this.instance) {
+            return msg("Successfully updated provider.");
+        } else {
+            return msg("Successfully created provider.");
+        }
     }
 
     async send(data: OAuth2Provider): Promise<OAuth2Provider> {

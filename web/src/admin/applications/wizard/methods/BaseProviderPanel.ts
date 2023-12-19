@@ -1,18 +1,25 @@
 import BasePanel from "../BasePanel";
 
 export class ApplicationWizardProviderPageBase extends BasePanel {
-    handleChange(_ev: InputEvent) {
-        const formValues = this.formValues;
-        if (!formValues) {
-            throw new Error("No provider values on form?");
+    handleChange(ev: InputEvent) {
+        if (!ev.target) {
+            console.warn(`Received event with no target: ${ev}`);
+            return;
         }
+        const target = ev.target as HTMLInputElement;
+        const value = target.type === "checkbox" ? target.checked : target.value;
         this.dispatchWizardUpdate({
             update: {
-                ...this.wizard,
-                provider: formValues,
+                provider: {
+                    [target.name]: value,
+                },
             },
-            status: this.valid ? "valid" : "invalid",
+            status: this.form.checkValidity() ? "valid" : "invalid",
         });
+    }
+
+    validator() {
+        return this.form.reportValidity();
     }
 }
 

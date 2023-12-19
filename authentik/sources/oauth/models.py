@@ -74,7 +74,7 @@ class OAuthSource(Source):
     def ui_login_button(self, request: HttpRequest) -> UILoginButton:
         provider_type = self.source_type
         provider = provider_type()
-        icon = self.icon_url
+        icon = self.get_icon
         if not icon:
             icon = provider.icon_url()
         return UILoginButton(
@@ -85,7 +85,7 @@ class OAuthSource(Source):
 
     def ui_user_settings(self) -> Optional[UserSettingSerializer]:
         provider_type = self.source_type
-        icon = self.icon_url
+        icon = self.get_icon
         if not icon:
             icon = provider_type().icon_url()
         return UserSettingSerializer(
@@ -232,7 +232,7 @@ class UserOAuthSourceConnection(UserSourceConnection):
     access_token = models.TextField(blank=True, null=True, default=None)
 
     @property
-    def serializer(self) -> type[Serializer]:
+    def serializer(self) -> Serializer:
         from authentik.sources.oauth.api.source_connection import (
             UserOAuthSourceConnectionSerializer,
         )

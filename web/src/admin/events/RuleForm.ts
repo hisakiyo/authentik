@@ -37,9 +37,11 @@ export class RuleForm extends ModelForm<NotificationRule, string> {
     }
 
     getSuccessMessage(): string {
-        return this.instance
-            ? msg("Successfully updated rule.")
-            : msg("Successfully created rule.");
+        if (this.instance) {
+            return msg("Successfully updated rule.");
+        } else {
+            return msg("Successfully created rule.");
+        }
     }
 
     async send(data: NotificationRule): Promise<NotificationRule> {

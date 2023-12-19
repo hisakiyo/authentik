@@ -4,7 +4,7 @@ import "@goauthentik/admin/policies/PolicyWizard";
 import "@goauthentik/admin/users/UserForm";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { uiConfig } from "@goauthentik/common/ui/config";
-import "@goauthentik/components/ak-status-label";
+import { PFColor } from "@goauthentik/elements/Label";
 import { PFSize } from "@goauthentik/elements/Spinner";
 import "@goauthentik/elements/Tabs";
 import "@goauthentik/elements/forms/DeleteBulkForm";
@@ -147,7 +147,9 @@ export class BoundPoliciesList extends Table<PolicyBinding> {
         return [
             html`<pre>${item.order}</pre>`,
             html`${this.getPolicyUserGroupRow(item)}`,
-            html`<ak-status-label type="warning" ?good=${item.enabled}></ak-status-label>`,
+            html` <ak-label color=${item.enabled ? PFColor.Green : PFColor.Orange}>
+                ${item.enabled ? msg("Yes") : msg("No")}
+            </ak-label>`,
             html`${item.timeout}`,
             html` ${this.getObjectEditButton(item)}
                 <ak-forms-modal size=${PFSize.Medium}>

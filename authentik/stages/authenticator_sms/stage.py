@@ -69,6 +69,7 @@ class AuthenticatorSMSStageView(ChallengeStageView):
         stage: AuthenticatorSMSStage = self.executor.current_stage
         hashed_number = hash_phone_number(phone_number)
         query = Q(phone_number=hashed_number) | Q(phone_number=phone_number)
+        print(SMSDevice.objects.filter(query, stage=stage.pk))
         if SMSDevice.objects.filter(query, stage=stage.pk).exists():
             raise ValidationError(_("Invalid phone number"))
         # No code yet, but we have a phone number, so send a verification message

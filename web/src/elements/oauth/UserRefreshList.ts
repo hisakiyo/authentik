@@ -1,6 +1,6 @@
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { uiConfig } from "@goauthentik/common/ui/config";
-import "@goauthentik/components/ak-status-label";
+import { PFColor } from "@goauthentik/elements/Label";
 import "@goauthentik/elements/forms/DeleteBulkForm";
 import { PaginatedResponse } from "@goauthentik/elements/table/Table";
 import { Table, TableColumn } from "@goauthentik/elements/table/Table";
@@ -85,7 +85,9 @@ export class UserOAuthRefreshList extends Table<TokenModel> {
     row(item: TokenModel): TemplateResult[] {
         return [
             html`<a href="#/core/providers/${item.provider?.pk}"> ${item.provider?.name} </a>`,
-            html`<ak-status-label type="warning" ?good=${item.revoked}></ak-status-label>`,
+            html`<ak-label color=${item.revoked ? PFColor.Orange : PFColor.Green}>
+                ${item.revoked ? msg("Yes") : msg("No")}
+            </ak-label>`,
             html`${item.expires?.toLocaleString()}`,
             html`${item.scope.join(", ")}`,
         ];

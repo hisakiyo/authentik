@@ -21,9 +21,7 @@ _other_urls = []
 for _authentik_app in get_apps():
     try:
         api_urls = import_module(f"{_authentik_app.name}.urls")
-    except ModuleNotFoundError:
-        continue
-    except ImportError as exc:
+    except (ModuleNotFoundError, ImportError) as exc:
         LOGGER.warning("Could not import app's URLs", app_name=_authentik_app.name, exc=exc)
         continue
     if not hasattr(api_urls, "api_urlpatterns"):

@@ -9,7 +9,6 @@ import {
     type RadiusProviderRequest,
     type SAMLProviderRequest,
     type SCIMProviderRequest,
-    type ValidationError,
 } from "@goauthentik/api";
 
 export type OneOfProvider =
@@ -25,13 +24,12 @@ export interface ApplicationWizardState {
     providerModel: string;
     app: Partial<ApplicationRequest>;
     provider: OneOfProvider;
-    errors: ValidationError;
 }
 
 type StatusType = "invalid" | "valid" | "submitted" | "failed";
 
 export type ApplicationWizardStateUpdate = {
-    update?: ApplicationWizardState;
+    update?: Partial<ApplicationWizardState>;
     status?: StatusType;
 };
 

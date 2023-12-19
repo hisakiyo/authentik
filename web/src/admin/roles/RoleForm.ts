@@ -21,9 +21,11 @@ export class RoleForm extends ModelForm<Role, string> {
     }
 
     getSuccessMessage(): string {
-        return this.instance
-            ? msg("Successfully updated role.")
-            : msg("Successfully created role.");
+        if (this.instance) {
+            return msg("Successfully updated role.");
+        } else {
+            return msg("Successfully created role.");
+        }
     }
 
     async send(data: Role): Promise<Role> {

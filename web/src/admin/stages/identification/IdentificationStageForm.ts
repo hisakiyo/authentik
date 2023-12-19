@@ -1,9 +1,9 @@
 import "@goauthentik/admin/common/ak-flow-search/ak-flow-search";
-import { BaseStageForm } from "@goauthentik/admin/stages/BaseStageForm";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { first, groupBy } from "@goauthentik/common/utils";
 import "@goauthentik/elements/forms/FormGroup";
 import "@goauthentik/elements/forms/HorizontalFormElement";
+import { ModelForm } from "@goauthentik/elements/forms/ModelForm";
 import "@goauthentik/elements/forms/SearchSelect";
 
 import { msg } from "@lit/localize";
@@ -23,7 +23,7 @@ import {
 } from "@goauthentik/api";
 
 @customElement("ak-stage-identification-form")
-export class IdentificationStageForm extends BaseStageForm<IdentificationStage> {
+export class IdentificationStageForm extends ModelForm<IdentificationStage, string> {
     loadInstance(pk: string): Promise<IdentificationStage> {
         return new StagesApi(DEFAULT_CONFIG).stagesIdentificationRetrieve({
             stageUuid: pk,
@@ -37,6 +37,14 @@ export class IdentificationStageForm extends BaseStageForm<IdentificationStage> 
     }
 
     sources?: PaginatedSourceList;
+
+    getSuccessMessage(): string {
+        if (this.instance) {
+            return msg("Successfully updated stage.");
+        } else {
+            return msg("Successfully created stage.");
+        }
+    }
 
     async send(data: IdentificationStage): Promise<IdentificationStage> {
         if (this.instance) {
@@ -60,7 +68,7 @@ export class IdentificationStageForm extends BaseStageForm<IdentificationStage> 
     }
 
     renderForm(): TemplateResult {
-        return html`<span>
+        return html` <span>
                 ${msg("Let the user identify themselves with their username or Email address.")}
             </span>
             <ak-form-element-horizontal label=${msg("Name")} ?required=${true} name="name">
@@ -158,26 +166,6 @@ export class IdentificationStageForm extends BaseStageForm<IdentificationStage> 
                         <p class="pf-c-form__helper-text">
                             ${msg(
                                 "When enabled, user fields are matched regardless of their casing.",
-                            )}
-                        </p>
-                    </ak-form-element-horizontal>
-                    <ak-form-element-horizontal name="pretendUserExists">
-                        <label class="pf-c-switch">
-                            <input
-                                class="pf-c-switch__input"
-                                type="checkbox"
-                                ?checked=${first(this.instance?.pretendUserExists, true)}
-                            />
-                            <span class="pf-c-switch__toggle">
-                                <span class="pf-c-switch__toggle-icon">
-                                    <i class="fas fa-check" aria-hidden="true"></i>
-                                </span>
-                            </span>
-                            <span class="pf-c-switch__label">${msg("Pretend user exists")}</span>
-                        </label>
-                        <p class="pf-c-form__helper-text">
-                            ${msg(
-                                "When enabled, the stage will always accept the given user identifier and continue.",
                             )}
                         </p>
                     </ak-form-element-horizontal>

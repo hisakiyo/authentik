@@ -90,9 +90,11 @@ export class PromptForm extends ModelForm<Prompt, string> {
     }
 
     getSuccessMessage(): string {
-        return this.instance
-            ? msg("Successfully updated prompt.")
-            : msg("Successfully created prompt.");
+        if (this.instance) {
+            return msg("Successfully updated prompt.");
+        } else {
+            return msg("Successfully created prompt.");
+        }
     }
 
     static get styles(): CSSResult[] {

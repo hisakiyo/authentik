@@ -36,9 +36,11 @@ export class TransportForm extends ModelForm<NotificationTransport, string> {
     showWebhook = false;
 
     getSuccessMessage(): string {
-        return this.instance
-            ? msg("Successfully updated transport.")
-            : msg("Successfully created transport.");
+        if (this.instance) {
+            return msg("Successfully updated transport.");
+        } else {
+            return msg("Successfully created transport.");
+        }
     }
 
     async send(data: NotificationTransport): Promise<NotificationTransport> {

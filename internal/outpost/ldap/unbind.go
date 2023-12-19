@@ -22,6 +22,11 @@ func (ls *LDAPServer) Unbind(boundDN string, conn net.Conn) (ldap.LDAPResultCode
 			"type":         "unbind",
 			"app":          selectedApp,
 		}).Observe(float64(span.EndTime.Sub(span.StartTime)) / float64(time.Second))
+		metrics.RequestsLegacy.With(prometheus.Labels{
+			"outpost_name": ls.ac.Outpost.Name,
+			"type":         "unbind",
+			"app":          selectedApp,
+		}).Observe(float64(span.EndTime.Sub(span.StartTime)))
 		req.Log().WithField("took-ms", span.EndTime.Sub(span.StartTime).Milliseconds()).Info("Unbind request")
 	}()
 
@@ -45,6 +50,12 @@ func (ls *LDAPServer) Unbind(boundDN string, conn net.Conn) (ldap.LDAPResultCode
 	}
 	req.Log().WithField("request", "unbind").Warning("No provider found for request")
 	metrics.RequestsRejected.With(prometheus.Labels{
+		"outpost_name": ls.ac.Outpost.Name,
+		"type":         "unbind",
+		"reason":       "no_provider",
+		"app":          "",
+	}).Inc()
+	metrics.RequestsRejectedLegacy.With(prometheus.Labels{
 		"outpost_name": ls.ac.Outpost.Name,
 		"type":         "unbind",
 		"reason":       "no_provider",

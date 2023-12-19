@@ -9,9 +9,9 @@ export default function Comparison() {
     const tooltipPlanned = "Planned as a future feature";
     const tooltipRequiresLicense =
         "Requires additional licenses/not included in base tier";
-    const tooltipRequiresProductAADS =
+    const toolRequiresProductAADS =
         "Requires additional product: Azure AD Domain Services";
-    const tooltipRequiresProductWAP =
+    const toolRequiresProductWAP =
         "Requires additional product: Web Application Proxy";
     return (
         <>
@@ -137,7 +137,7 @@ export default function Comparison() {
                                     <AlertTriangle
                                         className="tooltip"
                                         data-tooltip-content={
-                                            tooltipRequiresProductAADS
+                                            toolRequiresProductAADS
                                         }
                                     ></AlertTriangle>
                                 </td>
@@ -433,10 +433,10 @@ export default function Comparison() {
                                 <td className="result failed">
                                     <X></X>
                                 </td>
-                                <td className="result passed">
+                                <td className="result failed">
                                     <Check></Check>
                                 </td>
-                                <td className="result passed">
+                                <td className="result failed">
                                     <Check></Check>
                                 </td>
                                 <td className="result passed">
@@ -483,9 +483,7 @@ export default function Comparison() {
                                 </td>
                             </tr>
                             <tr>
-                                <td className="row-label">
-                                    Open-source/Source available
-                                </td>
+                                <td className="row-label">Open-source</td>
                                 <td className="result passed authentik">
                                     <Check></Check>
                                 </td>
@@ -509,14 +507,7 @@ export default function Comparison() {
                                 </td>
                             </tr>
                             <tr>
-                                <td
-                                    className="row-label tooltip"
-                                    data-tooltip-content={
-                                        "Reverse proxy to enable an SSO experience for applications that don't support it natively."
-                                    }
-                                >
-                                    Application Proxy
-                                </td>
+                                <td className="row-label">Application Proxy</td>
                                 <td className="result passed authentik">
                                     <Check></Check>
                                 </td>
@@ -532,7 +523,7 @@ export default function Comparison() {
                                     <AlertTriangle
                                         className="tooltip"
                                         data-tooltip-content={
-                                            tooltipRequiresProductWAP
+                                            toolRequiresProductWAP
                                         }
                                     ></AlertTriangle>
                                 </td>
@@ -547,47 +538,6 @@ export default function Comparison() {
                                 </td>
                                 <td className="result passed">
                                     <Check></Check>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td
-                                    className="row-label tooltip"
-                                    data-tooltip-content={
-                                        "Reverse proxy to enable an SSO experience for applications that don't support it natively."
-                                    }
-                                >
-                                    Device authentication/authorization
-                                </td>
-                                <td className="result failed authentik">
-                                    <X></X>
-                                </td>
-                                <td className="result failed">
-                                    <X></X>
-                                </td>
-                                <td className="result failed">
-                                    <X></X>
-                                </td>
-                                <td className="result warning">
-                                    <AlertTriangle
-                                        className="tooltip"
-                                        data-tooltip-content={
-                                            tooltipRequiresLicense
-                                        }
-                                    ></AlertTriangle>
-                                </td>
-                                <td className="result warning">
-                                    <AlertTriangle
-                                        className="tooltip"
-                                        data-tooltip-content={
-                                            tooltipAvailableThirdParty
-                                        }
-                                    ></AlertTriangle>
-                                </td>
-                                <td className="result failed">
-                                    <X></X>
-                                </td>
-                                <td className="result failed">
-                                    <X></X>
                                 </td>
                             </tr>
                         </tbody>

@@ -4,7 +4,6 @@ import "@goauthentik/app/elements/rbac/ObjectPermissionsPage";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { EVENT_REFRESH } from "@goauthentik/common/constants";
 import { convertToSlug } from "@goauthentik/common/utils";
-import "@goauthentik/components/ak-status-label";
 import "@goauthentik/components/events/ObjectChangelog";
 import MDCaddyStandalone from "@goauthentik/docs/providers/proxy/_caddy_standalone.md";
 import MDNginxIngress from "@goauthentik/docs/providers/proxy/_nginx_ingress.md";
@@ -16,6 +15,7 @@ import MDTraefikStandalone from "@goauthentik/docs/providers/proxy/_traefik_stan
 import MDHeaderAuthentication from "@goauthentik/docs/providers/proxy/header_authentication.md";
 import { AKElement } from "@goauthentik/elements/Base";
 import "@goauthentik/elements/CodeMirror";
+import { PFColor } from "@goauthentik/elements/Label";
 import "@goauthentik/elements/Markdown";
 import "@goauthentik/elements/Markdown";
 import { Replacer } from "@goauthentik/elements/Markdown";
@@ -330,10 +330,15 @@ export class ProxyProviderViewPage extends AKElement {
                                 </dt>
                                 <dd class="pf-c-description-list__description">
                                     <div class="pf-c-description-list__text">
-                                        <ak-status-label
-                                            type="info"
-                                            ?good=${this.provider.basicAuthEnabled}
-                                        ></ak-status-label>
+                                        <ak-label
+                                            color=${this.provider.basicAuthEnabled
+                                                ? PFColor.Green
+                                                : PFColor.Grey}
+                                        >
+                                            ${this.provider.basicAuthEnabled
+                                                ? msg("Yes")
+                                                : msg("No")}
+                                        </ak-label>
                                     </div>
                                 </dd>
                             </div>

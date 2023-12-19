@@ -46,8 +46,9 @@ export const SwitchInput = () => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const displayChange = (ev: any) => {
-        document.getElementById("switch-message-pad")!.innerText =
-            `Value selected: ${JSON.stringify(ev.target.checked, null, 2)}`;
+        document.getElementById(
+            "switch-message-pad",
+        )!.innerText = `Value selected: ${JSON.stringify(ev.target.checked, null, 2)}`;
     };
 
     return container(

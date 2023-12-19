@@ -4,30 +4,19 @@ import { Form } from "@goauthentik/elements/forms/Form";
 import "@goauthentik/elements/forms/HorizontalFormElement";
 import { ModalForm } from "@goauthentik/elements/forms/ModalForm";
 
-import { msg, str } from "@lit/localize";
+import { msg } from "@lit/localize";
 import { TemplateResult, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ifDefined } from "lit/directives/if-defined.js";
 
-import {
-    CoreApi,
-    Group,
-    UserServiceAccountRequest,
-    UserServiceAccountResponse,
-} from "@goauthentik/api";
+import { CoreApi, UserServiceAccountRequest, UserServiceAccountResponse } from "@goauthentik/api";
 
-@customElement("ak-user-service-account-form")
+@customElement("ak-user-service-account")
 export class ServiceAccountForm extends Form<UserServiceAccountRequest> {
     @property({ attribute: false })
     result?: UserServiceAccountResponse;
 
-    @property({ attribute: false })
-    group?: Group;
-
     getSuccessMessage(): string {
-        if (this.group) {
-            return msg(str`Successfully created user and added to group ${this.group.name}`);
-        }
         return msg("Successfully created user.");
     }
 
@@ -37,14 +26,6 @@ export class ServiceAccountForm extends Form<UserServiceAccountRequest> {
         });
         this.result = result;
         (this.parentElement as ModalForm).showSubmitButton = false;
-        if (this.group) {
-            await new CoreApi(DEFAULT_CONFIG).coreGroupsAddUserCreate({
-                groupUuid: this.group.pk,
-                userAccountRequest: {
-                    pk: this.result.userPk,
-                },
-            });
-        }
         return result;
     }
 

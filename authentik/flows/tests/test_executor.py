@@ -472,7 +472,6 @@ class TestFlowExecutor(FlowTestCase):
         ident_stage = IdentificationStage.objects.create(
             name="ident",
             user_fields=[UserFields.E_MAIL],
-            pretend_user_exists=False,
         )
         FlowStageBinding.objects.create(
             target=flow,

@@ -33,7 +33,6 @@ class IdentificationStageSerializer(StageSerializer):
             "passwordless_flow",
             "sources",
             "show_source_labels",
-            "pretend_user_exists",
         ]
 
 

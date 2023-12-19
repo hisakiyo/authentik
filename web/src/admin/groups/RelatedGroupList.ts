@@ -3,7 +3,7 @@ import "@goauthentik/admin/groups/GroupForm";
 import "@goauthentik/admin/users/GroupSelectModal";
 import { DEFAULT_CONFIG } from "@goauthentik/common/api/config";
 import { uiConfig } from "@goauthentik/common/ui/config";
-import "@goauthentik/components/ak-status-label";
+import { PFColor } from "@goauthentik/elements/Label";
 import "@goauthentik/elements/buttons/SpinnerButton";
 import "@goauthentik/elements/forms/DeleteBulkForm";
 import { Form } from "@goauthentik/elements/forms/Form";
@@ -145,7 +145,9 @@ export class RelatedGroupList extends Table<Group> {
         return [
             html`<a href="#/identity/groups/${item.pk}">${item.name}</a>`,
             html`${item.parentName || msg("-")}`,
-            html`<ak-label type="info" ?good=${item.isSuperuser}></ak-label>`,
+            html`<ak-label color=${item.isSuperuser ? PFColor.Green : PFColor.Grey}>
+                ${item.isSuperuser ? msg("Yes") : msg("No")}
+            </ak-label>`,
             html` <ak-forms-modal>
                 <span slot="submit"> ${msg("Update")} </span>
                 <span slot="header"> ${msg("Update Group")} </span>

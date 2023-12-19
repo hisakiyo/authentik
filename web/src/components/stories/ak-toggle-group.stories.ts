@@ -54,8 +54,9 @@ const testOptions = [
 export const ToggleGroup = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const displayChange = (ev: any) => {
-        document.getElementById("toggle-message-pad")!.innerText =
-            `Value selected: ${ev.detail.value}`;
+        document.getElementById(
+            "toggle-message-pad",
+        )!.innerText = `Value selected: ${ev.detail.value}`;
     };
 
     return container(

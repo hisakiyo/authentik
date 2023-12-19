@@ -74,7 +74,6 @@ dex.authentik.clientSecret: <base 64 encoded value of the Client Secret from the
 In the `argocd-cm` ConfigMap, add the following to the data field :
 
 ```yaml
-url: http://argocd.company
 dex.config: |
     connectors:
     - config:

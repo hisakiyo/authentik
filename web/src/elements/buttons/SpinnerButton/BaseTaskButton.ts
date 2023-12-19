@@ -5,7 +5,6 @@ import { CustomEmitterElement } from "@goauthentik/elements/utils/eventEmitter";
 
 import { Task, TaskStatus } from "@lit-labs/task";
 import { css, html } from "lit";
-import { property } from "lit/decorators.js";
 
 import PFButton from "@patternfly/patternfly/components/Button/button.css";
 import PFSpinner from "@patternfly/patternfly/components/Spinner/spinner.css";
@@ -57,9 +56,6 @@ export abstract class BaseTaskButton extends CustomEmitterElement(AKElement) {
     callAction!: () => Promise<unknown>;
 
     actionTask: Task;
-
-    @property({ type: Boolean })
-    disabled = false;
 
     constructor() {
         super();
@@ -125,7 +121,6 @@ export abstract class BaseTaskButton extends CustomEmitterElement(AKElement) {
             part="spinner-button"
             class="pf-c-button pf-m-progress ${this.buttonClasses}"
             @click=${this.onClick}
-            ?disabled=${this.disabled}
         >
             ${this.actionTask.render({ pending: () => this.spinner })}
             <slot></slot>
